@@ -2,11 +2,31 @@ import React from 'react'
 import "./chat.css"
 import { useState, useEffect } from 'react'
 const Chat = () => {
-    const worker = new Worker(new URL("./worker.js", import.meta.url),{
-        type:"module"
+    const [messageList, setMessageList] = useState({
+        user:"",
+        response:""
     })
     const [message, setmessage] = useState("")
     const [showSendBtn, setSendBtn] = useState(false)
+    const [results, setresults] = useEffect([])
+    const worker = new Worker(new URL("./worker.js", import.meta.url),{
+        type:"module"
+    })
+    worker.onmessage = (response) =>{
+
+    }
+    useEffect(()=>{
+        const loadingModel = () =>{
+            worker.postMessage("load model") 
+        }
+        loadingModel()
+    },[])
+    const getMessageResponse = ()=>{
+        worker.postMessage({
+            "message":message
+        })
+    }
+    
     const handleInputChange = (e) =>{
         setmessage(e.target.value)
     }
@@ -17,12 +37,12 @@ const Chat = () => {
             <div className='message-list'>
                 <div className='sender'>
                     <span>
-                        <p className='message'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quasi doloremque, porro quod magnam quisquam aperiam quo modi amet magni rerum asperiores officia voluptatum nobis. Dignissimos quibusdam optio expedita totam nesciunt. </p>
+                        <p className='message'></p>
                     </span>
                 </div>
                 <div className='receiver'>
                     <span>
-                        <p className='message'>HELLO How are u</p>
+                        <p className='message'></p>
                     </span>
                 </div>
             </div>
