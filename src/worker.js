@@ -1,7 +1,7 @@
 import { env, pipeline } from "@xenova/transformers";
 
 env.allowLocalModels = false
-env.useBrowserCache = false
+
 
 class ChatBotPipeline{
     static messageResponse 
@@ -32,8 +32,6 @@ class ChatBotPipeline{
         }
         return this.messageResponse
     }
-
-
 }
 
 onmessage = async (event) =>{
