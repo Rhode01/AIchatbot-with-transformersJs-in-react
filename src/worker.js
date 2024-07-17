@@ -1,13 +1,10 @@
 import { env, pipeline } from "@xenova/transformers";
 
 env.allowLocalModels = false
-
-
 class ChatBotPipeline{
     static messageResponse 
-    static modelPipeline = null
+    static modelPipeline 
     static model= "Xenova/blenderbot-400M-distill"
-
     static loadBlenderBotPipeline = async() =>{
         if (this.modelPipeline) return this.modelPipeline
         try {
@@ -23,7 +20,7 @@ class ChatBotPipeline{
         const modelpipeline = await this.loadBlenderBotPipeline()
         if (!modelpipeline) return null
         try {
-           this.messageResponse =  await modelpipeline(message) 
+            this.messageResponse =  await modelpipeline(message);
         } catch (error) {
             console.log({
                 "error occured while generating text": error.message
@@ -35,13 +32,15 @@ class ChatBotPipeline{
 }
 
 onmessage = async (event) =>{
-    const {type, message} = event.data
-    console.log(message)
+    const {type, messageList, message} = event.data
     switch (type) {
         case "loadModel":
+            console.log("fetching model ....");
             const modelpipeline = await ChatBotPipeline.loadBlenderBotPipeline()
             break
         case "usermessage":
+            const conversationContext = messageList.map((message) => message.content).join("\n"); 
+             const input = `${conversationContext}\n${message}`;
             const messageResponse = await ChatBotPipeline.generateMessageResponse(message)
             postMessage({ user: "ai", content: messageResponse })
             break

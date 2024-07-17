@@ -6,29 +6,28 @@ const Chat = () => {
         user:"",
         content:""
     }])
+    const [loading, setloading] = useState(false)
     const [message, setmessage] = useState("")
     const [showSendBtn, setSendBtn] = useState(false)
     const worker = new Worker(new URL("./worker.js", import.meta.url),{
         type:"module"
     })
     worker.onmessage = (event) =>{
-    const response =  event.data
+        setloading(false)
+        const user =  event.data.user
+        const response = event.data.content[0].generated_text
     setMessageList((prevMessage)=>
-        [...prevMessage, {user:response.user, response:response.content}]
+        [...prevMessage, {user:user, content:response}]
     )
     }
-    useEffect(()=>{
-        const loadingModel = () =>{
-            worker.postMessage({type:"loadModel"}) 
-        }
-        loadingModel()
-    },[])
-    const getMessageResponse = ()=>{
-        setMessageList((prev)=>[...prev, {user:"sender",content:message }])
-        setmessage("")
+    const getMessageResponse = async ()=>{
+        setloading(true)
+        setMessageList((prev)=>[...prev, {user:"sender", content:message }])
+        // setmessage("")
         worker.postMessage({
             type:"usermessage", 
-            message:messageList
+            messageList:messageList,
+            message:message
         })
     }
     
@@ -41,10 +40,10 @@ const Chat = () => {
             setSendBtn(false)
         }
     }
-    const handleFormSubmission = (e) =>{
+    const handleFormSubmission = async (e) =>{
         e.preventDefault()
         setSendBtn(false)
-        getMessageResponse()
+        await getMessageResponse();
     }
   return (
     <div className='container'>
@@ -74,11 +73,13 @@ const Chat = () => {
                     </span>
                 </div>
             </div>
+            <div className='formContainer'>
             <form onSubmit={handleFormSubmission}>
                 
                 <input type="text" value={message} onChange={handleInputChange} />
-             {showSendBtn &&   <input type="submit" name="sender" value="Send"  /> }   
+             {showSendBtn &&  <input type="submit" name="sender" value="Send"  /> }   
             </form>
+            </div>
         </div>
     </div>
   )
