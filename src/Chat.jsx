@@ -23,12 +23,13 @@ const Chat = () => {
     const getMessageResponse = async ()=>{
         setloading(true)
         setMessageList((prev)=>[...prev, {user:"sender", content:message }])
-        // setmessage("")
+        
         worker.postMessage({
             type:"usermessage", 
             messageList:messageList,
             message:message
         })
+        setmessage("")
     }
     
     const handleInputChange = (e) =>{
@@ -50,34 +51,23 @@ const Chat = () => {
         <div>
         <h6>AI CHATBOT IN REACT USING TRANSFORMERS JS</h6>
             <div className='message-list'>
-                <div className='sender'>
+                <div>
                             <span>
-                             {messageList.filter((message)=>message.user === "ai").map((message, index)=>{
+                             {messageList.length > 0  && messageList.map((message, index)=>{
                                 return (
-                                    <div key={index}>
+                                    <div key={index} className={message.user ==="ai" ? "sender" : "receiver"}>
                                         <p className='message'>{message.content}</p>
                                     </div>
                                 )
                              })}
                             </span>
                 </div>
-                <div className='receiver'>
-                    <span>
-                    {messageList.filter((message)=>message.user === "sender").map((message, index)=>{
-                        return (
-                            <div key={index}>
-                                <p className='message'>{message.content}</p>
-                            </div>
-                        )
-                        })}
-                    </span>
-                </div>
             </div>
             <div className='formContainer'>
             <form onSubmit={handleFormSubmission}>
                 
                 <input type="text" value={message} onChange={handleInputChange} />
-             {showSendBtn &&  <input type="submit" name="sender" value="Send"  /> }   
+             {!loading && showSendBtn &&  <input type="submit" name="sender" value="Send"  /> }   
             </form>
             </div>
         </div>
