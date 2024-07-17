@@ -36,10 +36,7 @@ class ChatBotPipeline{
 
 onmessage = async (event) =>{
     const {type, message} = event.data
-    //message is a list object that is receiving and array of object in this format
-    //[{user:"sender", content:"message content"    }]
-    //here on the worker iam destructuring the message object so i want to pass the actuall message array not the object
-    console.log("message list object  " + message[0].user);
+    console.log(message)
     switch (type) {
         case "loadModel":
             const modelpipeline = await ChatBotPipeline.loadBlenderBotPipeline()
