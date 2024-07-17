@@ -1,4 +1,4 @@
-### Getting Started with Create React App
+### Getting Started with TransformersJS with React App
 This project was created using create-react-app, a popular tool for building React applications. The project is called AI Chat in Browser using TransformerJS, and it demonstrates the use of TransformerJS for text-to-text generation.
 
 ### Dependencies
